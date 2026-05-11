@@ -41,7 +41,7 @@ def insert_query(data: Person_Data, db_auth):
             print("Erro ao inserir os dados")
             
 
-def query_graph(data: Person_Data, db_auth):
+def query_graph(db_auth):
     with GraphDatabase.driver(db_auth["uri"], auth=db_auth["auth"]) as driver:
         try:
             records, summary, keys = driver.execute_query("""
@@ -51,6 +51,7 @@ def query_graph(data: Person_Data, db_auth):
                 database_="neo4j",
             )
             for record in records:
+                print(record.data())
                 print(record.data())  # obtain record as dict
 
             # Summary information
