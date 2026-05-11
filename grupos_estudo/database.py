@@ -4,6 +4,7 @@ from classes.aluno import Aluno
 from classes.curso import Curso
 from classes.grupo_estudo import Grupo_Estudo
 
+
 def testa_conn():
     # URI examples: "neo4j://localhost", "neo4j+s://xxx.databases.neo4j.io"
     URI = "neo4j://localhost:7687"
@@ -19,21 +20,29 @@ def testa_conn():
             print("conexão falhou")
 
 
-def insert_query(data: Person_Data, db_auth):
+def insert_aluno_curso(aluno: Aluno, curso: Curso, db_auth):
     with GraphDatabase.driver(db_auth["uri"], auth=db_auth["auth"]) as driver:
         try:
             summary = driver.execute_query(
                 """
-                    CREATE (a:Person {name: $name})
-                    CREATE (b:Person {name: $friendName})
-                    CREATE (a)-[:KNOWS]->(b)
-            """,
-                name=data.name,
-                friendName=data.friendname,
+                    CREATE (:Aluno {nome: $nome_aluno, matricula: $matricula, email: $email, idade: $idade});
+                    CREATE (:Curso {nome: $nome_curso, duracao: $duracao});
+                    
+                    MATCH (a:Aluno {matricula: $matricula}), (c:Curso {nome: $nome_curso})
+                    CREATE (a)-[:MATRICULADO_EM]->(c);
+                """,
+                nome_aluno=aluno.nome,
+                matricula=aluno.matricula,
+                email=aluno.email,
+                idade=aluno.idade,
+                nome_curso=curso.nome,
+                duracao=curso.duraçao,
                 database_="neo4j",
             ).summary
 
-            print(f"CREATED ({data.name})-[:KNOWS]->({data.friendname})")
+            print(
+                f"CREATED ({aluno.nome}:Aluno)-[:MATRICULADO_EM]->({curso.nome}:Curso)"
+            )
 
             print(
                 "Created {nodes_created} nodes in {time} ms.".format(
