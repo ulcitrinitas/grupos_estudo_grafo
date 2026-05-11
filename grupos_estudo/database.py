@@ -38,5 +38,25 @@ def insert_query(data: Person_Data, db_auth):
                 )
             )
         except Exception:
-            ...
-    ...
+            print("Erro ao inserir os dados")
+            
+
+def query_graph(data: Person_Data, db_auth):
+    with GraphDatabase.driver(db_auth["uri"], auth=db_auth["auth"]) as driver:
+        try:
+            records, summary, keys = driver.execute_query("""
+                MATCH (p:Person)-[:KNOWS]->(:Person)
+                RETURN p.name AS name
+                """,
+                database_="neo4j",
+            )
+            for record in records:
+                print(record.data())  # obtain record as dict
+
+            # Summary information
+            print("The query `{query}` returned {records_count} records in {time} ms.".format(
+                query=summary.query, records_count=len(records),
+                time=summary.result_available_after
+            ))
+        except Exception:
+            print("Erro ao pegar o grafo")
