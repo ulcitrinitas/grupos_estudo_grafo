@@ -54,13 +54,13 @@ def insert_aluno_curso(aluno: Aluno, curso: Curso, db_auth):
             print("Erro ao inserir os dados")
 
 
-def query_graph(db_auth):
+def query_aluno_curso_graph(db_auth):
     with GraphDatabase.driver(db_auth["uri"], auth=db_auth["auth"]) as driver:
         try:
             records, summary, keys = driver.execute_query(
                 """
-                MATCH (a:Aluno)-[:PARTICIPA_DE]->(g:GrupoEstudo)
-                RETURN a.nome, collect(g.nome) AS grupos
+                    MATCH (a:Aluno)-[:MATRICULADO_EM]->(c:Curso)
+                    RETURN a.nome, a.matricula, a.email, c.nome AS curso
                 """,
                 database_="neo4j",
             )
