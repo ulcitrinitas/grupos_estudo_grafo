@@ -9,5 +9,7 @@ def testa_conn():
         try:
             driver.verify_connectivity()
             print("conectado com sucesso")
+
+            return {"uri": URI, "auth": AUTH}
         except Exception:
             print("conexão falhou")
