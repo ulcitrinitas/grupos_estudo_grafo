@@ -1,6 +1,7 @@
-def testa_conn():
-    from neo4j import GraphDatabase
+from neo4j import GraphDatabase
 
+
+def testa_conn():
     # URI examples: "neo4j://localhost", "neo4j+s://xxx.databases.neo4j.io"
     URI = "neo4j://localhost:7687"
     AUTH = ("neo4j", "6grKSWQvHSXtwpqWWegu")
@@ -13,3 +14,28 @@ def testa_conn():
             return {"uri": URI, "auth": AUTH}
         except Exception:
             print("conexão falhou")
+
+
+def insert_query(db_auth):
+    with GraphDatabase.driver(db_auth["uri"], auth=db_auth["auth"]) as driver:
+        try:
+            summary = driver.execute_query("""
+                    CREATE (a:Person {name: $name})
+                    CREATE (b:Person {name: $friendName})
+                    CREATE (a)-[:KNOWS]->(b)
+            """,
+            name="Alice", friendName="David",
+            database_= "neo4j").summary
+            
+            print("CREATE (Alice)-[:KNOWS]->(Alice)")
+            
+            print(
+                "Created {nodes_created} nodes in {time} ms.".format(
+                    nodes_created=summary.counters.nodes_created,
+                    time=summary.result_available_after,
+                )
+            )
+            
+        except Exception:
+            ...
+    ...
