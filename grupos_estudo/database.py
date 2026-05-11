@@ -16,8 +16,9 @@ def testa_conn():
             print("conectado com sucesso")
 
             return {"uri": URI, "auth": AUTH}
-        except Exception:
+        except Exception as e:
             print("conexão falhou")
+            print(f"Mensagem de erro {e}")
 
 
 def insert_aluno_curso(aluno: Aluno, curso: Curso, db_auth):
@@ -50,8 +51,9 @@ def insert_aluno_curso(aluno: Aluno, curso: Curso, db_auth):
                     time=summary.result_available_after,
                 )
             )
-        except Exception:
+        except Exception as e:
             print("Erro ao inserir os dados")
+            print(f"Mensagem de erro {e}")
 
 
 def query_aluno_curso_graph(db_auth):
@@ -76,5 +78,6 @@ def query_aluno_curso_graph(db_auth):
                     time=summary.result_available_after,
                 )
             )
-        except Exception:
+        except Exception as e:
             print("Erro ao pegar o grafo")
+            print(f"Mensagem de erro {e}")
