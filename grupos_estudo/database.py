@@ -1,5 +1,7 @@
 from neo4j import GraphDatabase
 
+from person import Person
+
 
 def testa_conn():
     # URI examples: "neo4j://localhost", "neo4j+s://xxx.databases.neo4j.io"
@@ -16,7 +18,7 @@ def testa_conn():
             print("conexão falhou")
 
 
-def insert_query(db_auth):
+def insert_query(data: Person, db_auth):
     with GraphDatabase.driver(db_auth["uri"], auth=db_auth["auth"]) as driver:
         try:
             summary = driver.execute_query("""
@@ -24,10 +26,10 @@ def insert_query(db_auth):
                     CREATE (b:Person {name: $friendName})
                     CREATE (a)-[:KNOWS]->(b)
             """,
-            name="Alice", friendName="David",
+            name=data.name, friendName=data.friendname,
             database_= "neo4j").summary
             
-            print("CREATE (Alice)-[:KNOWS]->(Alice)")
+            print(f"CREATED ({data.name})-[:KNOWS]->({data.friendname})")
             
             print(
                 "Created {nodes_created} nodes in {time} ms.".format(
@@ -35,7 +37,6 @@ def insert_query(db_auth):
                     time=summary.result_available_after,
                 )
             )
-            
         except Exception:
             ...
     ...
