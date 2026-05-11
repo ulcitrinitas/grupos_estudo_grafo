@@ -1,6 +1,6 @@
 from neo4j import GraphDatabase
 
-from person import Person
+from person import Person_Data
 
 
 def testa_conn():
@@ -18,7 +18,7 @@ def testa_conn():
             print("conexão falhou")
 
 
-def insert_query(data: Person, db_auth):
+def insert_query(data: Person_Data, db_auth):
     with GraphDatabase.driver(db_auth["uri"], auth=db_auth["auth"]) as driver:
         try:
             summary = driver.execute_query("""
