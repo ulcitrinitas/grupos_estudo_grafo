@@ -1,7 +1,7 @@
 from pprint import pprint
 
 from database import testa_conn, insert_query
-from person import Person_Data
+from grupos_estudo.classes.person import Person_Data
 
 db_auth = testa_conn()
 

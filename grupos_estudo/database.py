@@ -1,6 +1,6 @@
 from neo4j import GraphDatabase
 
-from person import Person_Data
+from grupos_estudo.classes.person import Person_Data
 
 
 def testa_conn():
