@@ -1,6 +1,3 @@
-def main():
-    print("Hello from grupos-estudos!")
+from database import testa_conn
 
-
-if __name__ == "__main__":
-    main()
+testa_conn()
