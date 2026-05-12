@@ -77,7 +77,7 @@ def criar_no_aluno_curso(aluno: Aluno, curso: Curso, db_auth):
             summary = driver.execute_query(
                 """
                     MATCH (a:Aluno {matricula: $matricula}), (c:Curso {nome: $nome_curso})
-                    MERGE (a)-[:MATRICULADO_EM]->(c)
+                    MERGE (a)-[:MATRICULADO_EM]->(c);
                 """,
                 matricula=aluno.matricula,
                 nome_curso=curso.nome,
@@ -105,7 +105,7 @@ def mostrar_aluno_curso_grafo(db_auth):
             records, summary, keys = driver.execute_query(
                 """
                     MATCH (a:Aluno)-[:MATRICULADO_EM]->(c:Curso)
-                    RETURN a.nome, a.matricula, a.email, c.nome AS curso
+                    RETURN a.nome AS aluno_nome, a.email AS email, c.nome AS curso_nome;
                 """,
                 database_="neo4j",
             )
@@ -125,10 +125,29 @@ def mostrar_aluno_curso_grafo(db_auth):
             print(f"Mensagem de erro {e}")
 
 
-def procurar_aluno_curso(db_auth):
+def procurar_aluno_curso(nome_curso: str, db_auth):
     with GraphDatabase.driver(db_auth["uri"], auth=db_auth["auth"]) as driver:
         try:
-            ...
+            records, summary, keys = driver.execute_query(
+                """
+                    MATCH (a:Aluno)-[:MATRICULADO_EM]->(c:Curso)
+                    c.nome = $nome_curso
+                    RETURN a.nome AS aluno_nome, a.email AS aluno_email, c.nome AS curso_nome;
+                """,
+                nome_curso=nome_curso,
+                database_="neo4j",
+            )
+            for record in records:
+                print(record.data())
+
+            # Summary information
+            print(
+                "The query `{query}` returned {records_count} records in {time} ms.".format(
+                    query=summary.query,
+                    records_count=len(records),
+                    time=summary.result_available_after,
+                )
+            )
         except Exception as e:
             print("Erro ao pegar o grafo")
             print(f"Mensagem de erro {e}")
