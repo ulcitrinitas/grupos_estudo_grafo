@@ -26,7 +26,8 @@ def criar_aluno(aluno: Aluno, db_auth):
         try:
             summary = driver.execute_query(
                 """
-                    CREATE (:Aluno {nome: $nome_aluno, matricula: $matricula, email: $email, idade: $idade});
+                    MERGE (a:Aluno {matricula: $matricula})
+                    ON CREATE SET a.nome = $nome_aluno, a.email = $email, a.idade = $idade;
                 """,
                 nome_aluno=aluno.nome,
                 matricula=aluno.matricula,
@@ -45,27 +46,29 @@ def criar_aluno(aluno: Aluno, db_auth):
             print("Erro ao inserir os dados")
             print(f"Mensagem de erro {e}")
 
-def criar_curso(curso: Curso, db_auth):
-        with GraphDatabase.driver(db_auth["uri"], auth=db_auth["auth"]) as driver:
-            try:
-                summary = driver.execute_query(
-                    """
-                        CREATE (:Curso {nome: $nome_curso, duracao: $duracao});
-                    """,
-                    nome_curso=curso.nome,
-                    duracao=curso.duraçao,
-                    database_="neo4j",
-                ).summary
 
-                print(
-                    "Created {nodes_created} nodes in {time} ms.".format(
-                        nodes_created=summary.counters.nodes_created,
-                        time=summary.result_available_after,
-                    )
+def criar_curso(curso: Curso, db_auth):
+    with GraphDatabase.driver(db_auth["uri"], auth=db_auth["auth"]) as driver:
+        try:
+            summary = driver.execute_query(
+                """
+                    MERGE (c:Curso {nome: $nome_curso})
+                    ON CREATE SET c.duracao = $duracao;
+                    """,
+                nome_curso=curso.nome,
+                duracao=curso.duraçao,
+                database_="neo4j",
+            ).summary
+
+            print(
+                "Created {nodes_created} nodes in {time} ms.".format(
+                    nodes_created=summary.counters.nodes_created,
+                    time=summary.result_available_after,
                 )
-            except Exception as e:
-                print("Erro ao inserir os dados")
-                print(f"Mensagem de erro {e}")
+            )
+        except Exception as e:
+            print("Erro ao inserir os dados")
+            print(f"Mensagem de erro {e}")
 
 
 def criar_no_aluno_curso(aluno: Aluno, curso: Curso, db_auth):
@@ -74,7 +77,7 @@ def criar_no_aluno_curso(aluno: Aluno, curso: Curso, db_auth):
             summary = driver.execute_query(
                 """
                     MATCH (a:Aluno {matricula: $matricula}), (c:Curso {nome: $nome_curso})
-                    CREATE (a)-[:MATRICULADO_EM]->(c)
+                    MERGE (a)-[:MATRICULADO_EM]->(c)
                 """,
                 matricula=aluno.matricula,
                 nome_curso=curso.nome,
@@ -82,7 +85,7 @@ def criar_no_aluno_curso(aluno: Aluno, curso: Curso, db_auth):
             ).summary
 
             print(
-                "Created {relationships_created} nodes in {time} ms.".format(
+                "Created {relationships_created} relationships in {time} ms.".format(
                     relationships_created=summary.counters.relationships_created,
                     time=summary.result_available_after,
                 )
@@ -108,7 +111,6 @@ def mostrar_aluno_curso_grafo(db_auth):
             )
             for record in records:
                 print(record.data())
-                print(record.data())  # obtain record as dict
 
             # Summary information
             print(
