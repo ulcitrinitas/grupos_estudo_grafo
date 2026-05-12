@@ -131,7 +131,7 @@ def procurar_aluno_curso(nome_curso: str, db_auth):
             records, summary, keys = driver.execute_query(
                 """
                     MATCH (a:Aluno)-[:MATRICULADO_EM]->(c:Curso)
-                    c.nome = $nome_curso
+                    WHERE c.nome = $nome_curso
                     RETURN a.nome AS aluno_nome, a.email AS aluno_email, c.nome AS curso_nome;
                 """,
                 nome_curso=nome_curso,
