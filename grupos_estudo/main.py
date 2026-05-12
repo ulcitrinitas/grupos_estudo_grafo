@@ -8,10 +8,10 @@ db_auth = testa_conn()
 
 a = Aluno.model_validate(
     {
-        "nome": "Ana Pereira",
-        "matricula": 74128,
-        "email": "ana_pereira@email.com",
-        "idade": 24,
+        "nome": "Alwul Azryuin",
+        "matricula": 52365,
+        "email": "alwul_azryuin@email.com",
+        "idade": 25,
     }
 )
 
