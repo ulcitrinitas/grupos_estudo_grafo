@@ -6,6 +6,7 @@ from neo4j_querys import (
     criar_curso,
     criar_no_aluno_curso,
     mostrar_aluno_curso_grafo,
+    procurar_aluno_curso,
 )
 from classes.aluno import Aluno
 from classes.curso import Curso
@@ -24,11 +25,12 @@ a = Aluno.model_validate(
 c = Curso.model_validate({"nome": "Ciência da Computação", "duraçao": 8})
 
 print("---------------------------------------------------")
-criar_aluno(a, db_auth)
+# criar_aluno(a, db_auth)
 print("---------------------------------------------------")
-criar_curso(c, db_auth)
+# criar_curso(c, db_auth)
 print("---------------------------------------------------")
-criar_no_aluno_curso(a, c, db_auth)
+# criar_no_aluno_curso(a, c, db_auth)
 print("---------------------------------------------------")
-mostrar_aluno_curso_grafo(db_auth)
+# mostrar_aluno_curso_grafo(db_auth)
 print("---------------------------------------------------")
+procurar_aluno_curso(c.nome, db_auth)
