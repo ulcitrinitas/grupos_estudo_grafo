@@ -123,3 +123,12 @@ def mostrar_aluno_curso_grafo(db_auth):
         except Exception as e:
             print("Erro ao pegar o grafo")
             print(f"Mensagem de erro {e}")
+
+
+def procurar_aluno_curso(db_auth):
+    with GraphDatabase.driver(db_auth["uri"], auth=db_auth["auth"]) as driver:
+        try:
+            ...
+        except Exception as e:
+            print("Erro ao pegar o grafo")
+            print(f"Mensagem de erro {e}")
