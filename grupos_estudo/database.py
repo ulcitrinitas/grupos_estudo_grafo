@@ -56,8 +56,8 @@ def insert_aluno_curso(aluno: Aluno, curso: Curso, db_auth):
             ).summary
 
             print(
-                "Created {nodes_created} nodes in {time} ms.".format(
-                    nodes_created=summary.counters.nodes_created,
+                "Created {relationships_created} nodes in {time} ms.".format(
+                    relationships_created=summary.counters.relationships_created,
                     time=summary.result_available_after,
                 )
             )
