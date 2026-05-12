@@ -1,6 +1,6 @@
 from pprint import pprint
 
-from database import testa_conn, insert_aluno_curso, query_aluno_curso_graph
+from neo4j_querys import testa_conn, criar_aluno, criar_curso, criar_no_aluno_curso, mostrar_aluno_curso_grafo 
 from classes.aluno import Aluno
 from classes.curso import Curso
 
