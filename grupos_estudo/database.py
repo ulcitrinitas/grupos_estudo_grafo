@@ -26,11 +26,8 @@ def insert_aluno_curso(aluno: Aluno, curso: Curso, db_auth):
         try:
             summary = driver.execute_query(
                 """
-                    CREATE (:Aluno {nome: $nome_aluno, matricula: $matricula, email: $email, idade: $idade});
+                    CREATE (:Aluno {nome: $nome_aluno, matricula: $matricula, email: $email, idade: $idade})
                     CREATE (:Curso {nome: $nome_curso, duracao: $duracao});
-                    
-                    MATCH (a:Aluno {matricula: $matricula}), (c:Curso {nome: $nome_curso})
-                    CREATE (a)-[:MATRICULADO_EM]->(c);
                 """,
                 nome_aluno=aluno.nome,
                 matricula=aluno.matricula,
@@ -42,14 +39,31 @@ def insert_aluno_curso(aluno: Aluno, curso: Curso, db_auth):
             ).summary
 
             print(
-                f"CREATED ({aluno.nome}:Aluno)-[:MATRICULADO_EM]->({curso.nome}:Curso)"
+                "Created {nodes_created} nodes in {time} ms.".format(
+                    nodes_created=summary.counters.nodes_created,
+                    time=summary.result_available_after,
+                )
             )
+
+            summary = driver.execute_query(
+                """
+                    MATCH (a:Aluno {matricula: $matricula}), (c:Curso {nome: $nome_curso})
+                    CREATE (a)-[:MATRICULADO_EM]->(c)
+                """,
+                matricula=aluno.matricula,
+                nome_curso=curso.nome,
+                database_="neo4j",
+            ).summary
 
             print(
                 "Created {nodes_created} nodes in {time} ms.".format(
                     nodes_created=summary.counters.nodes_created,
                     time=summary.result_available_after,
                 )
+            )
+
+            print(
+                f"CREATED ({aluno.nome}:Aluno)-[:MATRICULADO_EM]->({curso.nome}:Curso)"
             )
         except Exception as e:
             print("Erro ao inserir os dados")
