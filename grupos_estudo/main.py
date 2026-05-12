@@ -8,19 +8,18 @@ db_auth = testa_conn()
 
 a = Aluno.model_validate(
     {
-        "nome": "Alwul Azryuin",
-        "matricula": 52365,
-        "email": "alwul_azryuin@email.com",
-        "idade": 25,
+        "nome": "Lilia Głowacka",
+        "matricula": 85236,
+        "email": "lilia_głowacka@email.com",
+        "idade": 26,
     }
 )
 
-c = Curso.model_validate({"nome": "Inteligência Artificial", "duraçao": 8})
+c = Curso.model_validate({"nome": "Ciência da Computação", "duraçao": 8})
 
 print("---------------------------------------------------")
-pprint(a)
-pprint(c)
+
 print("---------------------------------------------------")
-insert_aluno_curso(a, c, db_auth)
+
 print("---------------------------------------------------")
-query_aluno_curso_graph(db_auth)
+
