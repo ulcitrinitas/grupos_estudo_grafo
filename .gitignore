@@ -8,3 +8,10 @@ wheels/
 
 # Virtual environments
 .venv
+
+# compose dirs
+
+database/logs
+database/config
+database/data
+database/plugin
