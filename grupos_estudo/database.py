@@ -21,7 +21,34 @@ def testa_conn():
             print(f"Mensagem de erro {e}")
 
 
-def insert_aluno_curso(aluno: Aluno, curso: Curso, db_auth):
+def create_aluno(aluno: Aluno, db_auth):
+    with GraphDatabase.driver(db_auth["uri"], auth=db_auth["auth"]) as driver:
+        try:
+            summary = driver.execute_query(
+                """
+                    CREATE (:Aluno {nome: $nome_aluno, matricula: $matricula, email: $email, idade: $idade});
+                """,
+                nome_aluno=aluno.nome,
+                matricula=aluno.matricula,
+                email=aluno.email,
+                idade=aluno.idade,
+                database_="neo4j",
+            ).summary
+
+            print(
+                "Created {nodes_created} nodes in {time} ms.".format(
+                    nodes_created=summary.counters.nodes_created,
+                    time=summary.result_available_after,
+                )
+            )
+        except Exception as e:
+            print("Erro ao inserir os dados")
+            print(f"Mensagem de erro {e}")
+
+    ...
+
+
+def insert_aluno_curso(curso: Curso, db_auth):
     with GraphDatabase.driver(db_auth["uri"], auth=db_auth["auth"]) as driver:
         try:
             summary = driver.execute_query(
