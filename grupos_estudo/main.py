@@ -1,6 +1,12 @@
 from pprint import pprint
 
-from neo4j_querys import testa_conn, criar_aluno, criar_curso, criar_no_aluno_curso, mostrar_aluno_curso_grafo 
+from neo4j_querys import (
+    testa_conn,
+    criar_aluno,
+    criar_curso,
+    criar_no_aluno_curso,
+    mostrar_aluno_curso_grafo,
+)
 from classes.aluno import Aluno
 from classes.curso import Curso
 
@@ -18,8 +24,11 @@ a = Aluno.model_validate(
 c = Curso.model_validate({"nome": "Ciência da Computação", "duraçao": 8})
 
 print("---------------------------------------------------")
-
+criar_aluno(a, db_auth)
 print("---------------------------------------------------")
-
+criar_curso(c, db_auth)
 print("---------------------------------------------------")
-
+criar_no_aluno_curso(a, c, db_auth)
+print("---------------------------------------------------")
+mostrar_aluno_curso_grafo(db_auth)
+print("---------------------------------------------------")
