@@ -183,3 +183,32 @@ def procurar_participantes(nome_grupo: str, db_auth):
             print("Erro ao pegar o grafo")
             print(f"Mensagem de erro {e}")
 
+# Funções para atualizar os nós
+
+def atualizar_aluno(aluno: Aluno, db_auth):
+    with GraphDatabase.driver(db_auth["uri"], auth=db_auth["auth"]) as driver:
+        try:
+            summary = driver.execute_query(
+                """
+                    MATCH (a:Aluno {matricula: $matricula})
+                    SET a.nome = $nome_aluno, a.email = $email, a.idade = $idade
+                    RETURN a;
+                """,
+                nome_aluno=aluno.nome,
+                matricula=aluno.matricula,
+                email=aluno.email,
+                idade=aluno.idade,
+                database_=db_auth["db"],
+            ).summary
+
+            print(
+                "Created {nodes_created} nodes in {time} ms.".format(
+                    nodes_created=summary.counters.nodes_created,
+                    time=summary.result_available_after,
+                )
+            )
+        except Exception as e:
+            print("Erro ao inserir os dados")
+            print(f"Mensagem de erro {e}")
+
+
