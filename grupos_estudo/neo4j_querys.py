@@ -235,3 +235,31 @@ def procurar_aluno_curso(nome_curso: str, db_auth):
         except Exception as e:
             print("Erro ao pegar o grafo")
             print(f"Mensagem de erro {e}")
+            
+def procurar_participam(nome_grupo: str, db_auth):
+    with GraphDatabase.driver(db_auth["uri"], auth=db_auth["auth"]) as driver:
+        try:
+            records, summary, keys = driver.execute_query(
+                """
+                    MATCH (a:Aluno)-[:PARTICIPA_DE]->(g:GrupoEstudo)
+                    WHERE g.nome = $nome_grupo
+                    RETURN g.nome AS grupo, collect(a.nome) AS alunos
+                """,
+                nome_grupo=nome_grupo,
+                database_=db_auth["db"],
+            )
+            for record in records:
+                print(record.data())
+
+            # Summary information
+            print(
+                "The query `{query}` returned {records_count} records in {time} ms.".format(
+                    query=summary.query,
+                    records_count=len(records),
+                    time=summary.result_available_after,
+                )
+            )
+        except Exception as e:
+            print("Erro ao pegar o grafo")
+            print(f"Mensagem de erro {e}")
+
