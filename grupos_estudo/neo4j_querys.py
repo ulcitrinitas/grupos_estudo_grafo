@@ -20,6 +20,7 @@ def testa_conn():
             print("conexão falhou")
             print(f"Mensagem de erro {e}")
 
+# Funções para criar os nós do grafo
 
 def criar_aluno(aluno: Aluno, db_auth):
     with GraphDatabase.driver(db_auth["uri"], auth=db_auth["auth"]) as driver:
@@ -95,6 +96,7 @@ def criar_grupo(grupo: Grupo_Estudo, db_auth):
             print(f"Mensagem de erro {e}")
 
 
+# Funções para criar relacionamentos
 
 def criar_no_aluno_curso(aluno: Aluno, curso: Curso, db_auth):
     with GraphDatabase.driver(db_auth["uri"], auth=db_auth["auth"]) as driver:
@@ -123,6 +125,7 @@ def criar_no_aluno_curso(aluno: Aluno, curso: Curso, db_auth):
             print("Erro ao inserir os dados")
             print(f"Mensagem de erro {e}")
 
+# Funções para mostrar as relações
 
 def mostrar_aluno_curso_grafo(db_auth):
     with GraphDatabase.driver(db_auth["uri"], auth=db_auth["auth"]) as driver:
@@ -149,6 +152,7 @@ def mostrar_aluno_curso_grafo(db_auth):
             print("Erro ao pegar o grafo")
             print(f"Mensagem de erro {e}")
 
+# Funções para procurar os campos no grafo
 
 def procurar_aluno_curso(nome_curso: str, db_auth):
     with GraphDatabase.driver(db_auth["uri"], auth=db_auth["auth"]) as driver:
