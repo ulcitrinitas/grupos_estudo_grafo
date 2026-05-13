@@ -211,4 +211,26 @@ def atualizar_aluno(aluno: Aluno, db_auth):
             print("Erro ao inserir os dados")
             print(f"Mensagem de erro {e}")
 
+def atualizar_grupo(grupo: Grupo_Estudo, grupo_novo: Grupo_Estudo, db_auth):
+    with GraphDatabase.driver(db_auth["uri"], auth=db_auth["auth"]) as driver:
+        try:
+            summary = driver.execute_query(
+                """               
+                    MATCH (g:GrupoEstudo {nome: $nome_grupo})
+                    SET g.nome = $novo_nome
+                    RETURN g;
+                    """,
+                nome_grupo=grupo.nome,
+                novo_nome=grupo_novo.nome,
+                database_=db_auth["db"],
+            ).summary
 
+            print(
+                "Created {nodes_created} nodes in {time} ms.".format(
+                    nodes_created=summary.counters.nodes_created,
+                    time=summary.result_available_after,
+                )
+            )
+        except Exception as e:
+            print("Erro ao inserir os dados")
+            print(f"Mensagem de erro {e}")
