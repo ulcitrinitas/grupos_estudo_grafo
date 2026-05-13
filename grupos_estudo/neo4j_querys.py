@@ -202,7 +202,7 @@ def atualizar_aluno(aluno: Aluno, db_auth):
             ).summary
 
             print(
-                "Created {nodes_created} nodes in {time} ms.".format(
+                "Updated {nodes_created} nodes in {time} ms.".format(
                     nodes_created=summary.counters.nodes_created,
                     time=summary.result_available_after,
                 )
@@ -226,7 +226,7 @@ def atualizar_grupo(grupo: Grupo_Estudo, grupo_novo: Grupo_Estudo, db_auth):
             ).summary
 
             print(
-                "Created {nodes_created} nodes in {time} ms.".format(
+                "Updated {nodes_created} nodes in {time} ms.".format(
                     nodes_created=summary.counters.nodes_created,
                     time=summary.result_available_after,
                 )
@@ -234,3 +234,29 @@ def atualizar_grupo(grupo: Grupo_Estudo, grupo_novo: Grupo_Estudo, db_auth):
         except Exception as e:
             print("Erro ao inserir os dados")
             print(f"Mensagem de erro {e}")
+            
+
+# Funções para deletar os nós
+
+def apagar_aluno(aluno_matricula: str, db_auth):
+    with GraphDatabase.driver(db_auth["uri"], auth=db_auth["auth"]) as driver:
+        try:
+            summary = driver.execute_query(
+                """               
+                MATCH (a:Aluno {matricula: $matricula})
+                DETACH DELETE a;
+                """,
+                matricula=aluno_matricula,
+                database_=db_auth["db"],
+            ).summary
+
+            print(
+                "Updated {nodes_created} nodes in {time} ms.".format(
+                    nodes_created=summary.counters.nodes_created,
+                    time=summary.result_available_after,
+                )
+            )
+        except Exception as e:
+            print("Erro ao inserir os dados")
+            print(f"Mensagem de erro {e}")   
+
