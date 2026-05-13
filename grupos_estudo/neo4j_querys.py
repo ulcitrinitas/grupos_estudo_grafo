@@ -76,7 +76,7 @@ def criar_grupo(grupo: Grupo_Estudo, db_auth):
         try:
             summary = driver.execute_query(
                 """
-                    MERGE (g:GrupoEstudo {data_criacao = datetime()})
+                    MERGE (g:GrupoEstudo {data_criacao: datetime()})
                     ON CREATE
                     SET g.nome = $nome_grupo
                     RETURN g.nome, g.data_criacao;
@@ -120,6 +120,34 @@ def criar_no_aluno_curso(aluno: Aluno, curso: Curso, db_auth):
 
             print(
                 f"CREATED ({aluno.nome}:Aluno)-[:MATRICULADO_EM]->({curso.nome}:Curso)"
+            )
+        except Exception as e:
+            print("Erro ao inserir os dados")
+            print(f"Mensagem de erro {e}")
+
+            
+def criar_relacao_aluno_grupo(aluno: Aluno, grupo: Grupo_Estudo, db_auth):
+    with GraphDatabase.driver(db_auth["uri"], auth=db_auth["auth"]) as driver:
+        try:
+            summary = driver.execute_query(
+                """
+                    MATCH (a:Aluno {matricula: $matricula}), (g:GrupoEstudo {nome: $nome_grupo})
+                    MERGE (a)-[:PARTICIPA_DE {data_participacao: datetime()}]->(g);
+                """,
+                matricula=aluno.matricula,
+                nome_grupo=grupo.nome,
+                database_="neo4j",
+            ).summary
+
+            print(
+                "Created {relationships_created} relationships in {time} ms.".format(
+                    relationships_created=summary.counters.relationships_created,
+                    time=summary.result_available_after,
+                )
+            )
+
+            print(
+                f"CREATED ({aluno.nome}:Aluno)-[:PARTICIPA_DE]->({grupo.nome}:Curso)"
             )
         except Exception as e:
             print("Erro ao inserir os dados")
