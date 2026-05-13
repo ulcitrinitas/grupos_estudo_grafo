@@ -251,7 +251,29 @@ def apagar_aluno(aluno_matricula: str, db_auth):
             ).summary
 
             print(
-                "Updated {nodes_created} nodes in {time} ms.".format(
+                "Deleted {nodes_created} nodes in {time} ms.".format(
+                    nodes_created=summary.counters.nodes_created,
+                    time=summary.result_available_after,
+                )
+            )
+        except Exception as e:
+            print("Erro ao inserir os dados")
+            print(f"Mensagem de erro {e}")
+            
+def apagar_grupo(nome_grupo: str, db_auth):
+    with GraphDatabase.driver(db_auth["uri"], auth=db_auth["auth"]) as driver:
+        try:
+            summary = driver.execute_query(
+                """               
+                MATCH (g:GrupoEstudo {nome: $nome})
+                DETACH DELETE g;
+                """,
+                nome=nome_grupo,
+                database_=db_auth["db"],
+            ).summary
+
+            print(
+                "Deleted {nodes_created} nodes in {time} ms.".format(
                     nodes_created=summary.counters.nodes_created,
                     time=summary.result_available_after,
                 )
