@@ -282,3 +282,28 @@ def apagar_grupo(nome_grupo: str, db_auth):
             print("Erro ao inserir os dados")
             print(f"Mensagem de erro {e}")   
 
+# Funções para deletar os relações
+
+def apagar_relacao_aluno_grupo(aluno_nome: str, nome_grupo: str, db_auth):
+    with GraphDatabase.driver(db_auth["uri"], auth=db_auth["auth"]) as driver:
+        try:
+            summary = driver.execute_query(
+                """
+                MATCH (a:Aluno {nome: $aluno_nome})-[p:PARTICIPA_DE]->(g:GrupoEstudo)
+                DELETE p
+                """,
+                nome=aluno_nome,
+                database_=db_auth["db"],
+            ).summary
+
+            print(
+                "Deleted {relationships_created} relationships in {time} ms.".format(
+                    relationships_created=summary.counters.relationships_created,
+                    time=summary.result_available_after,
+                )
+            )
+        except Exception as e:
+            print("Erro ao inserir os dados")
+            print(f"Mensagem de erro {e}")   
+
+
