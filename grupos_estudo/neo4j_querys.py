@@ -70,6 +70,31 @@ def criar_curso(curso: Curso, db_auth):
             print("Erro ao inserir os dados")
             print(f"Mensagem de erro {e}")
 
+def criar_grupo(grupo: Grupo_Estudo, db_auth):
+    with GraphDatabase.driver(db_auth["uri"], auth=db_auth["auth"]) as driver:
+        try:
+            summary = driver.execute_query(
+                """
+                    MERGE (g:GrupoEstudo {data_criacao = datetime()})
+                    ON CREATE
+                    SET g.nome = $nome_grupo
+                    RETURN g.nome, g.data_criacao;
+                    """,
+                nome_grupo=grupo.nome,
+                database_="neo4j",
+            ).summary
+
+            print(
+                "Created {nodes_created} nodes in {time} ms.".format(
+                    nodes_created=summary.counters.nodes_created,
+                    time=summary.result_available_after,
+                )
+            )
+        except Exception as e:
+            print("Erro ao inserir os dados")
+            print(f"Mensagem de erro {e}")
+
+
 
 def criar_no_aluno_curso(aluno: Aluno, curso: Curso, db_auth):
     with GraphDatabase.driver(db_auth["uri"], auth=db_auth["auth"]) as driver:
