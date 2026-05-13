@@ -9,13 +9,14 @@ def testa_conn():
     # URI examples: "neo4j://localhost", "neo4j+s://xxx.databases.neo4j.io"
     URI = "neo4j://localhost:7687"
     AUTH = ("neo4j", "6grKSWQvHSXtwpqWWegu")
+    DB = "neo4j"
 
     with GraphDatabase.driver(URI, auth=AUTH) as driver:
         try:
             driver.verify_connectivity()
             print("conectado com sucesso")
 
-            return {"uri": URI, "auth": AUTH}
+            return {"uri": URI, "auth": AUTH, "db": DB}
         except Exception as e:
             print("conexão falhou")
             print(f"Mensagem de erro {e}")
@@ -34,7 +35,7 @@ def criar_aluno(aluno: Aluno, db_auth):
                 matricula=aluno.matricula,
                 email=aluno.email,
                 idade=aluno.idade,
-                database_="neo4j",
+                database_=db_auth["db"],
             ).summary
 
             print(
@@ -58,7 +59,7 @@ def criar_curso(curso: Curso, db_auth):
                     """,
                 nome_curso=curso.nome,
                 duracao=curso.duraçao,
-                database_="neo4j",
+                database_=db_auth["db"],
             ).summary
 
             print(
@@ -82,7 +83,7 @@ def criar_grupo(grupo: Grupo_Estudo, db_auth):
                     RETURN g.nome, g.data_criacao;
                     """,
                 nome_grupo=grupo.nome,
-                database_="neo4j",
+                database_=db_auth["db"],
             ).summary
 
             print(
@@ -108,7 +109,7 @@ def criar_no_aluno_curso(aluno: Aluno, curso: Curso, db_auth):
                 """,
                 matricula=aluno.matricula,
                 nome_curso=curso.nome,
-                database_="neo4j",
+                database_=db_auth["db"],
             ).summary
 
             print(
@@ -136,7 +137,7 @@ def criar_relacao_aluno_grupo(aluno: Aluno, grupo: Grupo_Estudo, db_auth):
                 """,
                 matricula=aluno.matricula,
                 nome_grupo=grupo.nome,
-                database_="neo4j",
+                database_=db_auth["db"],
             ).summary
 
             print(
@@ -163,7 +164,7 @@ def mostrar_aluno_curso_grafo(db_auth):
                     MATCH (a:Aluno)-[:MATRICULADO_EM]->(c:Curso)
                     RETURN a.nome AS aluno_nome, a.email AS email, c.nome AS curso_nome;
                 """,
-                database_="neo4j",
+                database_=db_auth["db"],
             )
             for record in records:
                 print(record.data())
@@ -192,7 +193,7 @@ def procurar_aluno_curso(nome_curso: str, db_auth):
                     RETURN a.nome AS aluno_nome, a.email AS aluno_email, c.nome AS curso_nome;
                 """,
                 nome_curso=nome_curso,
-                database_="neo4j",
+                database_=db_auth["db"],
             )
             for record in records:
                 print(record.data())
