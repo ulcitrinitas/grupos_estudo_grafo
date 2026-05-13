@@ -98,34 +98,6 @@ def criar_grupo(grupo: Grupo_Estudo, db_auth):
 
 
 # Funções para criar relacionamentos
-
-def criar_no_aluno_curso(aluno: Aluno, curso: Curso, db_auth):
-    with GraphDatabase.driver(db_auth["uri"], auth=db_auth["auth"]) as driver:
-        try:
-            summary = driver.execute_query(
-                """
-                    MATCH (a:Aluno {matricula: $matricula}), (c:Curso {nome: $nome_curso})
-                    MERGE (a)-[:MATRICULADO_EM]->(c);
-                """,
-                matricula=aluno.matricula,
-                nome_curso=curso.nome,
-                database_=db_auth["db"],
-            ).summary
-
-            print(
-                "Created {relationships_created} relationships in {time} ms.".format(
-                    relationships_created=summary.counters.relationships_created,
-                    time=summary.result_available_after,
-                )
-            )
-
-            print(
-                f"CREATED ({aluno.nome}:Aluno)-[:MATRICULADO_EM]->({curso.nome}:Curso)"
-            )
-        except Exception as e:
-            print("Erro ao inserir os dados")
-            print(f"Mensagem de erro {e}")
-
             
 def criar_relacao_aluno_grupo(aluno: Aluno, grupo: Grupo_Estudo, db_auth):
     with GraphDatabase.driver(db_auth["uri"], auth=db_auth["auth"]) as driver:
@@ -156,32 +128,6 @@ def criar_relacao_aluno_grupo(aluno: Aluno, grupo: Grupo_Estudo, db_auth):
 
 # Funções para mostrar as relações
 
-def mostrar_aluno_curso_grafo(db_auth):
-    with GraphDatabase.driver(db_auth["uri"], auth=db_auth["auth"]) as driver:
-        try:
-            records, summary, keys = driver.execute_query(
-                """
-                    MATCH (a:Aluno)-[:MATRICULADO_EM]->(c:Curso)
-                    RETURN a.nome AS aluno_nome, a.email AS email, c.nome AS curso_nome;
-                """,
-                database_=db_auth["db"],
-            )
-            for record in records:
-                print(record.data())
-
-            # Summary information
-            print(
-                "The query `{query}` returned {records_count} records in {time} ms.".format(
-                    query=summary.query,
-                    records_count=len(records),
-                    time=summary.result_available_after,
-                )
-            )
-        except Exception as e:
-            print("Erro ao pegar o grafo")
-            print(f"Mensagem de erro {e}")
-
-
 def mostrar_aluno_grupo_grafo(db_auth):
     with GraphDatabase.driver(db_auth["uri"], auth=db_auth["auth"]) as driver:
         try:
@@ -209,34 +155,8 @@ def mostrar_aluno_grupo_grafo(db_auth):
 
 # Funções para procurar os campos no grafo
 
-def procurar_aluno_curso(nome_curso: str, db_auth):
-    with GraphDatabase.driver(db_auth["uri"], auth=db_auth["auth"]) as driver:
-        try:
-            records, summary, keys = driver.execute_query(
-                """
-                    MATCH (a:Aluno)-[:MATRICULADO_EM]->(c:Curso)
-                    WHERE c.nome = $nome_curso
-                    RETURN a.nome AS aluno_nome, a.email AS aluno_email, c.nome AS curso_nome;
-                """,
-                nome_curso=nome_curso,
-                database_=db_auth["db"],
-            )
-            for record in records:
-                print(record.data())
-
-            # Summary information
-            print(
-                "The query `{query}` returned {records_count} records in {time} ms.".format(
-                    query=summary.query,
-                    records_count=len(records),
-                    time=summary.result_available_after,
-                )
-            )
-        except Exception as e:
-            print("Erro ao pegar o grafo")
-            print(f"Mensagem de erro {e}")
             
-def procurar_participam(nome_grupo: str, db_auth):
+def procurar_participantes(nome_grupo: str, db_auth):
     with GraphDatabase.driver(db_auth["uri"], auth=db_auth["auth"]) as driver:
         try:
             records, summary, keys = driver.execute_query(
