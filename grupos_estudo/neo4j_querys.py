@@ -181,6 +181,32 @@ def mostrar_aluno_curso_grafo(db_auth):
             print("Erro ao pegar o grafo")
             print(f"Mensagem de erro {e}")
 
+
+def mostrar_aluno_grupo_grafo(db_auth):
+    with GraphDatabase.driver(db_auth["uri"], auth=db_auth["auth"]) as driver:
+        try:
+            records, summary, keys = driver.execute_query(
+                """
+                    MATCH (a:Aluno)-[p:PARTICIPA_DE]->(g:GrupoEstudo)
+                    RETURN a.nome AS aluno_nome, a.email AS email, p.data_participacao AS data_participacao, collect(g.nome) AS grupos;
+                """,
+                database_=db_auth["db"],
+            )
+            for record in records:
+                print(record.data())
+
+            # Summary information
+            print(
+                "The query `{query}` returned {records_count} records in {time} ms.".format(
+                    query=summary.query,
+                    records_count=len(records),
+                    time=summary.result_available_after,
+                )
+            )
+        except Exception as e:
+            print("Erro ao pegar o grafo")
+            print(f"Mensagem de erro {e}")
+
 # Funções para procurar os campos no grafo
 
 def procurar_aluno_curso(nome_curso: str, db_auth):
