@@ -1,36 +1,22 @@
-from pprint import pprint
+from fastapi import FastAPI
 
-from neo4j_querys import (
-    testa_conn,
-    criar_aluno,
-    criar_curso,
-    criar_no_aluno_curso,
-    mostrar_aluno_curso_grafo,
-    procurar_aluno_curso,
-)
 from classes.aluno import Aluno
 from classes.curso import Curso
 
-db_auth = testa_conn()
+# db_auth = testa_conn()
 
-a = Aluno.model_validate(
-    {
-        "nome": "Lilia Głowacka",
-        "matricula": 85236,
-        "email": "lilia_głowacka@email.com",
-        "idade": 26,
+app = FastAPI()
+
+@app.get("/")
+def read_root():
+    return {
+        "Hello": "World",
+        "Foo": "Bar"
     }
-)
+    
 
-c = Curso.model_validate({"nome": "Ciência da Computação", "duraçao": 8})
-
-print("---------------------------------------------------")
-# criar_aluno(a, db_auth)
-print("---------------------------------------------------")
-# criar_curso(c, db_auth)
-print("---------------------------------------------------")
-# criar_no_aluno_curso(a, c, db_auth)
-print("---------------------------------------------------")
-# mostrar_aluno_curso_grafo(db_auth)
-print("---------------------------------------------------")
-procurar_aluno_curso(c.nome, db_auth)
+app.get("/curso")
+def mostrar_aluno():
+    
+    curso = Curso.model_validate({"nome": "IA", "duraçao": 8})
+    return curso.model_dump_json()
