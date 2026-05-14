@@ -1,9 +1,13 @@
 from fastapi import FastAPI
 
+from pprint import pprint
+
 from classes.aluno import Aluno
 from classes.curso import Curso
 
-# db_auth = testa_conn()
+from neo4j_querys import testa_conn, mostrar_aluno_grupo_grafo
+
+db_auth = testa_conn()
 
 app = FastAPI()
 
@@ -15,8 +19,7 @@ def read_root():
     }
     
 
-app.get("/curso")
-def mostrar_aluno():
-    
-    curso = Curso.model_validate({"nome": "IA", "duraçao": 8})
-    return curso.model_dump_json()
+@app.get("/participantes")
+def mostrar_participantes():
+    registros = mostrar_aluno_grupo_grafo(db_auth)
+    return registros
